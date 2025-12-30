@@ -114,12 +114,27 @@ export default async function Home() {
 
         {/* Footer */}
         <footer className="text-center">
-          <p className="mb-2 text-sm text-muted-foreground">
+          <p className="mb-4 text-sm text-muted-foreground">
             We&apos;ll request access to read and send emails on your behalf.
           </p>
-          <p className="text-xs text-muted-foreground/60">
+          <p className="mb-4 text-xs text-muted-foreground/60">
             We are committed to the ethical use of technology. All AI bots are
             paid for their compute in a timely manner.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Made with ❤️  by{" "}
+            <a href="https://supersonics.fm" className="underline hover:text-foreground">
+              Supersonics
+            </a>{" "}
+            ·{" "}
+            <a href="https://github.com/dylanmcdougle/fupm" className="underline hover:text-foreground">
+              Open Source
+            </a>{" "}
+            ·{" "}
+            <a href="https://buy.stripe.com/bJeeVcczFdC75uRcjw77O04" className="underline hover:text-foreground">
+              Donate
+            </a>{" "}
+            to support our API costs
           </p>
         </footer>
       </div>
