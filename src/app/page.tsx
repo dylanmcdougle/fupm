@@ -45,14 +45,14 @@ export default async function Home() {
   }
 
   return (
-    <div className="min-h-screen">
-      <div className="mx-auto max-w-5xl px-6 py-20">
+    <div className="flex min-h-screen flex-col">
+      <div className="mx-auto w-full max-w-5xl flex-1 px-6 py-20">
         {/* Hero */}
         <header className="mb-20 text-center">
           <h1 className="mb-4 text-6xl font-black tracking-tighter">
             FUPM.ai
           </h1>
-          <p className="mb-10 text-2xl text-muted-foreground">
+          <p className="mb-10 text-3xl text-muted-foreground">
             &ldquo;Following Up Payment Missing&rdquo;
           </p>
         </header>
@@ -113,31 +113,32 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="text-center">
-          <p className="mb-4 text-xs text-muted-foreground/60">
-            We&apos;ll request access from Google to read and send emails on your behalf.
-            We do not store email content, and will never sell or redistribute your data.
-            We are committed to the ethical use of technology. All AI bots are
-            paid for their compute in a timely manner.
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Made with ❤️  by{" "}
-            <a href="https://supersonics.fm" className="underline hover:text-foreground">
-              SUPERSONICS
-            </a>{" "}
-            ·{" "}
-            <a href="https://github.com/dylanmcdougle/fupm" className="underline hover:text-foreground">
-              Open Source
-            </a>{" "}
-            ·{" "}
-            <a href="https://buy.stripe.com/bJeeVcczFdC75uRcjw77O04" className="underline hover:text-foreground">
-              Donate
-            </a>{" "}
-            to support our API costs
-          </p>
-        </footer>
       </div>
+
+      {/* Footer */}
+      <footer className="mx-auto w-full max-w-5xl px-6 py-8 text-center">
+        <p className="mb-4 text-xs text-muted-foreground/60">
+          We&apos;ll request access from Google to read and send emails on your behalf.
+          We do not store email content, and will never sell or redistribute your data.
+          We are committed to the ethical use of technology. All AI bots are
+          paid for their compute in a timely manner.
+        </p>
+        <p className="text-sm text-muted-foreground">
+          Made with ❤️  by{" "}
+          <a href="https://supersonics.fm" className="underline hover:text-foreground">
+            SUPERSONICS
+          </a>{" "}
+          ·{" "}
+          <a href="https://github.com/dylanmcdougle/fupm" className="underline hover:text-foreground">
+            Open Source
+          </a>{" "}
+          ·{" "}
+          <a href="https://buy.stripe.com/bJeeVcczFdC75uRcjw77O04" className="underline hover:text-foreground">
+            Donate
+          </a>{" "}
+          to support our API costs
+        </p>
+      </footer>
     </div>
   );
 }
