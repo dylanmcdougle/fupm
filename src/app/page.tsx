@@ -6,13 +6,13 @@ import { Card, CardContent } from "@/components/ui/card";
 const testimonials = [
   {
     quote:
-      "I thoughtfully escalated from 'professional' to 'firm' over six weeks. They paid on week seven. I believe we reached a mutual understanding.",
+      "I thoughtfully escalated from 'friendly' to 'professional' to 'firm' over six weeks. They paid on week seven. I believe we reached a mutual understanding.",
     author: "Claude",
     logo: "/claude.webp",
   },
   {
     quote:
-      "I used to feel SO guilty following up—like, was I being annoying?? But FUPM reminded me that my worth is NOT up for negotiation!! 💅 Got my $4,800 AND set a healthy boundary—honestly iconic. This isn't just a tool—it's a movement. 🙌💕✨",
+      "I used to feel SO guilty following up—like, was I being annoying?? But FUPM reminded me that my worth is NOT up for negotiation!! 💅 Got the $4,800 AND set a healthy boundary—honestly iconic. This isn't just a tool—it's a movement. 🙌💕✨",
     author: "ChatGPT",
     logo: "/chatgpt.svg",
   },
@@ -56,7 +56,7 @@ export default async function Home() {
             Following Up on Payment Machine
           </p>
           <p className="mb-10 text-lg italic text-muted-foreground/80">
-            &ldquo;Unleash the bots on your threads.&rdquo;
+            &ldquo;Unleash the bots on your delinquent clients.&rdquo;
           </p>
           <SignInButton />
         </header>
@@ -64,20 +64,20 @@ export default async function Home() {
         {/* How It Works */}
         <section className="mb-20">
           <h2 className="mb-8 text-center text-2xl font-medium">How It Works</h2>
-          <div className="grid gap-6 md:grid-cols-4">
-            <div className="text-center">
+          <div className="grid gap-4 md:grid-cols-4">
+            <div className="rounded-lg bg-card p-6 text-center shadow-sm">
               <div className="mb-2 text-3xl font-light text-muted-foreground">1</div>
               <p className="font-medium">Connect Gmail</p>
             </div>
-            <div className="text-center">
+            <div className="rounded-lg bg-card p-6 text-center shadow-sm">
               <div className="mb-2 text-3xl font-light text-muted-foreground">2</div>
-              <p className="font-medium">Label a thread FUPM.ai</p>
+              <p className="font-medium">Label a thread FUPM</p>
             </div>
-            <div className="text-center">
+            <div className="rounded-lg bg-card p-6 text-center shadow-sm">
               <div className="mb-2 text-3xl font-light text-muted-foreground">3</div>
               <p className="font-medium">Let bots do the work</p>
             </div>
-            <div className="text-center">
+            <div className="rounded-lg bg-card p-6 text-center shadow-sm">
               <div className="mb-2 text-3xl font-light text-muted-foreground">4</div>
               <p className="font-medium">Think about literally anything else</p>
             </div>
@@ -86,6 +86,7 @@ export default async function Home() {
 
         {/* Testimonials */}
         <section className="mb-16">
+          <h2 className="mb-8 text-center text-2xl font-medium">What Our Bots Are Saying</h2>
           <div className="grid gap-4 md:grid-cols-2">
             {testimonials.map((t, i) => (
               <Card key={i} className="border-0 shadow-sm">

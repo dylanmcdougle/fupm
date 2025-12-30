@@ -136,7 +136,7 @@ export function DashboardClient({
         {requests.length === 0 ? (
           <div className="py-16 text-center">
             <p className="text-muted-foreground">
-              No requests yet. Label an email thread with &quot;FUPM.ai&quot; in Gmail, then sync.
+              No requests yet. Label an email thread with &quot;FUPM.AI&quot; in Gmail, then sync.
             </p>
           </div>
         ) : (
