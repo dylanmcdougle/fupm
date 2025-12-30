@@ -109,6 +109,29 @@ export default async function Home() {
           <SignInButton />
         </header>
 
+        {/* How It Works */}
+        <section className="mb-20">
+          <h2 className="mb-8 text-center text-2xl font-medium">How It Works</h2>
+          <div className="grid gap-6 md:grid-cols-4">
+            <div className="text-center">
+              <div className="mb-2 text-3xl font-light text-muted-foreground">1</div>
+              <p className="font-medium">Connect Gmail</p>
+            </div>
+            <div className="text-center">
+              <div className="mb-2 text-3xl font-light text-muted-foreground">2</div>
+              <p className="font-medium">Label a thread FUPM.ai</p>
+            </div>
+            <div className="text-center">
+              <div className="mb-2 text-3xl font-light text-muted-foreground">3</div>
+              <p className="font-medium">Let bots do the work</p>
+            </div>
+            <div className="text-center">
+              <div className="mb-2 text-3xl font-light text-muted-foreground">4</div>
+              <p className="font-medium">Think about literally anything else</p>
+            </div>
+          </div>
+        </section>
+
         {/* Testimonials */}
         <section className="mb-16">
           <div className="grid gap-4 md:grid-cols-2">
