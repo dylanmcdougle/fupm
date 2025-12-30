@@ -1,36 +1,101 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FUPM — Invoice Follow-up Bot
 
-## Getting Started
+A minimal web app that automates invoice payment follow-ups via Gmail.
 
-First, run the development server:
+## How it works
+
+1. Sign in with Google (grants Gmail access)
+2. Label any invoice thread in Gmail with "FUPM"
+3. Click "Sync Gmail" in the dashboard
+4. AI extracts context (recipient, amount, etc.) from the thread
+5. Follow-ups are sent on your schedule until you mark it closed
+
+## Setup
+
+### 1. Clone and install
+
+```bash
+npm install
+```
+
+### 2. Set up Google OAuth
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project (or use existing)
+3. Enable the Gmail API:
+   - APIs & Services → Library → Search "Gmail API" → Enable
+4. Configure OAuth consent screen:
+   - APIs & Services → OAuth consent screen
+   - User Type: External
+   - Fill in app name, support email
+   - Add scopes: `gmail.modify`, `gmail.send`, `openid`, `email`, `profile`
+5. Create OAuth credentials:
+   - APIs & Services → Credentials → Create Credentials → OAuth client ID
+   - Application type: Web application
+   - Authorized redirect URIs: `http://localhost:3000/api/auth/callback/google`
+   - (For production, add your production URL too)
+6. Copy Client ID and Client Secret
+
+### 3. Get Anthropic API key
+
+1. Go to [console.anthropic.com](https://console.anthropic.com/)
+2. Create an API key
+
+### 4. Configure environment
+
+```bash
+cp .env.example .env.local
+```
+
+Fill in:
+- `DATABASE_URL` — from Railway Postgres
+- `NEXTAUTH_SECRET` — generate with `openssl rand -base64 32`
+- `NEXTAUTH_URL` — `http://localhost:3000` for local dev
+- `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` — from step 2
+- `ANTHROPIC_API_KEY` — from step 3
+- `CRON_SECRET` — any random string for cron security
+
+### 5. Set up database
+
+Run the schema against your Railway Postgres:
+
+```bash
+npm run db:push
+```
+
+Or manually run `schema.sql`.
+
+### 6. Run locally
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploy to Railway
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Push to GitHub
+2. Create new Railway project from repo
+3. Add Postgres plugin
+4. Set environment variables (same as `.env.local`)
+5. Add cron job:
+   - Create new Railway service
+   - Set to run `curl -H "Authorization: Bearer $CRON_SECRET" https://your-app.railway.app/api/cron`
+   - Schedule: daily (e.g., `0 9 * * *` for 9am UTC)
 
-## Learn More
+## Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+- Next.js 14 (App Router)
+- Tailwind CSS + shadcn/ui
+- NextAuth.js (Google OAuth)
+- Drizzle ORM + Postgres
+- Google Gmail API
+- Anthropic Claude API
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Tone Options
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Professional** — Polite and business-like
+- **Friendly** — Warm and personable
+- **Firm** — Direct and assertive
+- **Aggressive** — Very direct, emphasizes urgency
