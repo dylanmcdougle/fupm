@@ -21,9 +21,16 @@ export async function getGmailClient(userId: string) {
     process.env.GOOGLE_CLIENT_SECRET
   );
 
+  // Calculate expiry date from tokenRefreshedAt + tokenExpiresIn
+  let expiryDate: number | undefined;
+  if (user[0].tokenRefreshedAt && user[0].tokenExpiresIn) {
+    expiryDate = new Date(user[0].tokenRefreshedAt).getTime() + (user[0].tokenExpiresIn * 1000);
+  }
+
   oauth2Client.setCredentials({
     access_token: user[0].gmailAccessToken,
     refresh_token: user[0].gmailRefreshToken,
+    expiry_date: expiryDate,
   });
 
   // Handle token refresh
@@ -33,11 +40,25 @@ export async function getGmailClient(userId: string) {
         .update(users)
         .set({
           gmailAccessToken: tokens.access_token,
+          tokenExpiresIn: tokens.expiry_date
+            ? Math.floor((tokens.expiry_date - Date.now()) / 1000)
+            : 3600,
           tokenRefreshedAt: new Date(),
         })
         .where(eq(users.id, userId));
     }
   });
+
+  // Proactively refresh if token expires in less than 5 minutes
+  if (expiryDate && expiryDate - Date.now() < 5 * 60 * 1000) {
+    try {
+      const { credentials } = await oauth2Client.refreshAccessToken();
+      oauth2Client.setCredentials(credentials);
+    } catch (error) {
+      console.error("Failed to proactively refresh token:", error);
+      // Will fail on API call, triggering re-auth
+    }
+  }
 
   return google.gmail({ version: "v1", auth: oauth2Client });
 }
