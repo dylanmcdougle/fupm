@@ -81,10 +81,14 @@ const testimonials = [
 export default async function Home() {
   // Only check auth if env vars are configured
   if (process.env.GOOGLE_CLIENT_ID && process.env.NEXTAUTH_SECRET) {
-    const { auth } = await import("@/lib/auth");
-    const session = await auth();
-    if (session) {
-      redirect("/dashboard");
+    try {
+      const { auth } = await import("@/lib/auth");
+      const session = await auth();
+      if (session?.user?.email) {
+        redirect("/dashboard");
+      }
+    } catch {
+      // Auth failed, show landing page
     }
   }
 
