@@ -53,10 +53,10 @@ export default async function Home() {
             FUPM.ai
           </h1>
           <p className="mb-2 text-xl text-muted-foreground">
-            Following Up on Payment Machine
+            Follow UP Machine
           </p>
           <p className="mb-10 text-lg italic text-muted-foreground/80">
-            &ldquo;Unleash the bots on your delinquent clients.&rdquo;
+            &ldquo;Unleash the bots on your invoice threads.&rdquo;
           </p>
           <SignInButton />
         </header>
