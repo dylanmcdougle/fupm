@@ -7,6 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -51,6 +57,15 @@ export function DashboardClient({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ followupAction: value }),
     });
+  };
+
+  const handleMarkStatus = async (requestId: string, status: string) => {
+    await fetch(`/api/requests/${requestId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status }),
+    });
+    window.location.reload();
   };
 
   const activeRequests = requests.filter((r) => r.status === "active");
@@ -121,7 +136,7 @@ export function DashboardClient({
         {requests.length === 0 ? (
           <div className="py-16 text-center">
             <p className="text-muted-foreground">
-              No requests yet. Label an email thread with &quot;FUPM&quot; in Gmail, then sync.
+              No requests yet. Label an email thread with &quot;FUPM.ai&quot; in Gmail, then sync.
             </p>
           </div>
         ) : (
@@ -131,12 +146,11 @@ export function DashboardClient({
                 <h2 className="mb-4 text-sm font-medium text-muted-foreground">Active</h2>
                 <div className="space-y-2">
                   {activeRequests.map((req) => (
-                    <Link
+                    <div
                       key={req.id}
-                      href={`/request/${req.id}`}
-                      className="flex items-center justify-between rounded-lg border p-4 transition-colors hover:bg-muted/50"
+                      className="flex items-center justify-between rounded-lg border p-4"
                     >
-                      <div className="min-w-0 flex-1">
+                      <Link href={`/request/${req.id}`} className="min-w-0 flex-1 hover:opacity-70">
                         <div className="flex items-center gap-2">
                           <span className="truncate font-medium">
                             {req.recipientName || req.recipientEmail}
@@ -150,7 +164,7 @@ export function DashboardClient({
                         <p className="truncate text-sm text-muted-foreground">
                           {req.subject || "No subject"}
                         </p>
-                      </div>
+                      </Link>
                       <div className="ml-4 flex items-center gap-4 text-sm">
                         <div className="text-right">
                           <div className="text-muted-foreground">
@@ -163,8 +177,21 @@ export function DashboardClient({
                         <Badge variant="outline" className="capitalize">
                           {req.tone}
                         </Badge>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm">•••</Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleMarkStatus(req.id, "closed")}>
+                              Mark as Paid
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleMarkStatus(req.id, "cancelled")}>
+                              Cancel
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
-                    </Link>
+                    </div>
                   ))}
                 </div>
               </section>

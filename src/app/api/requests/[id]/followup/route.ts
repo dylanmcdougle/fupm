@@ -7,7 +7,7 @@ import { generateFollowupEmail, Tone } from "@/lib/anthropic";
 import { createDraft, sendEmail } from "@/lib/gmail";
 
 export async function POST(
-  _request: Request,
+  httpRequest: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth();
@@ -18,6 +18,15 @@ export async function POST(
 
   try {
     const { id } = await params;
+
+    // Parse request body for optional mode override
+    let requestedMode: string | undefined;
+    try {
+      const body = await httpRequest.json();
+      requestedMode = body.mode; // "draft" or "send"
+    } catch {
+      // No body or invalid JSON - use user settings
+    }
 
     // Get request with ownership check
     const req = await db
@@ -79,8 +88,11 @@ export async function POST(
 
     let emailId: string | undefined;
 
-    if (user[0]?.followupAction === "send") {
-      // Auto-send
+    // Use explicit mode if provided, otherwise fall back to user settings
+    const shouldSend = requestedMode === "send" || (!requestedMode && user[0]?.followupAction === "send");
+
+    if (shouldSend) {
+      // Send email
       const sent = await sendEmail(
         session.user.id,
         request.threadId!,
@@ -102,15 +114,17 @@ export async function POST(
     }
 
     // Record followup
+    const mode = shouldSend ? "sent" : "draft";
     await db.insert(followups).values({
       requestId: id,
       emailId,
       followupNumber,
+      mode,
     });
 
     return NextResponse.json({
       success: true,
-      mode: user[0]?.followupAction || "draft",
+      mode,
     });
   } catch (error) {
     console.error("Followup error:", error);

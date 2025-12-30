@@ -3,7 +3,7 @@ import { db } from "./db";
 import { users } from "./db/schema";
 import { eq } from "drizzle-orm";
 
-const FUPM_LABEL_NAME = "FUPM";
+const FUPM_LABEL_NAME = "FUPM.ai";
 
 export async function getGmailClient(userId: string) {
   const user = await db

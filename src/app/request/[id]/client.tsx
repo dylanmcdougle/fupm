@@ -34,7 +34,8 @@ export function RequestClient({
 }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
-  const [sendingFollowup, setSendingFollowup] = useState(false);
+  const [creatingDraft, setCreatingDraft] = useState(false);
+  const [sending, setSending] = useState(false);
   const [form, setForm] = useState({
     recipientName: request.recipientName || "",
     recipientEmail: request.recipientEmail,
@@ -61,17 +62,35 @@ export function RequestClient({
     }
   };
 
-  const handleSendFollowup = async () => {
-    setSendingFollowup(true);
+  const handleCreateDraft = async () => {
+    setCreatingDraft(true);
     try {
       await fetch(`/api/requests/${request.id}/followup`, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mode: "draft" }),
       });
       router.refresh();
     } catch (error) {
-      console.error("Followup failed:", error);
+      console.error("Create draft failed:", error);
     } finally {
-      setSendingFollowup(false);
+      setCreatingDraft(false);
+    }
+  };
+
+  const handleCreateAndSend = async () => {
+    setSending(true);
+    try {
+      await fetch(`/api/requests/${request.id}/followup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mode: "send" }),
+      });
+      router.refresh();
+    } catch (error) {
+      console.error("Send failed:", error);
+    } finally {
+      setSending(false);
     }
   };
 
@@ -93,6 +112,8 @@ export function RequestClient({
       currency: "USD",
     }).format(parseFloat(amount));
   };
+
+  const isActive = form.status === "active";
 
   return (
     <div className="min-h-screen">
@@ -133,165 +154,179 @@ export function RequestClient({
           </div>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-2">
-          <section className="space-y-4">
-            <h2 className="text-sm font-medium text-muted-foreground">Details</h2>
+        {/* Settings & Context Section */}
+        <section className="mb-8 space-y-4">
+          <h2 className="text-sm font-medium text-muted-foreground">Settings & Context</h2>
 
-            <div className="space-y-4">
-              <div className="space-y-1">
-                <Label htmlFor="recipientName">Recipient Name</Label>
-                <Input
-                  id="recipientName"
-                  value={form.recipientName}
-                  onChange={(e) =>
-                    setForm({ ...form, recipientName: e.target.value })
-                  }
-                  placeholder="John Doe"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="recipientEmail">Recipient Email</Label>
-                <Input
-                  id="recipientEmail"
-                  value={form.recipientEmail}
-                  onChange={(e) =>
-                    setForm({ ...form, recipientEmail: e.target.value })
-                  }
-                />
-              </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="amount">Amount</Label>
-                <Input
-                  id="amount"
-                  type="number"
-                  step="0.01"
-                  value={form.amount}
-                  onChange={(e) => setForm({ ...form, amount: e.target.value })}
-                  placeholder="0.00"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="tone">Tone</Label>
-                <Select
-                  value={form.tone}
-                  onValueChange={(v) => setForm({ ...form, tone: v })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {tones.map((t) => (
-                      <SelectItem key={t.value} value={t.value}>
-                        {t.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="interval">Follow-up Interval (days)</Label>
-                <Input
-                  id="interval"
-                  type="number"
-                  min="1"
-                  max="90"
-                  value={form.followupInterval}
-                  onChange={(e) =>
-                    setForm({ ...form, followupInterval: parseInt(e.target.value) || 7 })
-                  }
-                />
-              </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="context">Context for AI</Label>
-                <Textarea
-                  id="context"
-                  value={form.context}
-                  onChange={(e) => setForm({ ...form, context: e.target.value })}
-                  placeholder="Additional context to help generate better follow-ups..."
-                  rows={3}
-                />
-              </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="status">Status</Label>
-                <Select
-                  value={form.status}
-                  onValueChange={(v) => setForm({ ...form, status: v })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="closed">Closed (Paid)</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex gap-2 pt-2">
-                <Button onClick={handleSave} disabled={saving}>
-                  {saving ? "Saving..." : "Save Changes"}
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={handleSendFollowup}
-                  disabled={sendingFollowup || form.status !== "active"}
-                >
-                  {sendingFollowup ? "Sending..." : "Send Follow-up Now"}
-                </Button>
-              </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-1">
+              <Label htmlFor="recipientName">Recipient Name</Label>
+              <Input
+                id="recipientName"
+                value={form.recipientName}
+                onChange={(e) =>
+                  setForm({ ...form, recipientName: e.target.value })
+                }
+                placeholder="John Doe"
+              />
             </div>
-          </section>
 
-          <section className="space-y-4">
-            <h2 className="text-sm font-medium text-muted-foreground">
-              Follow-up History ({followups.length})
-            </h2>
+            <div className="space-y-1">
+              <Label htmlFor="recipientEmail">Recipient Email</Label>
+              <Input
+                id="recipientEmail"
+                value={form.recipientEmail}
+                onChange={(e) =>
+                  setForm({ ...form, recipientEmail: e.target.value })
+                }
+              />
+            </div>
 
-            {followups.length === 0 ? (
-              <p className="text-sm text-muted-foreground">
-                No follow-ups sent yet.
-              </p>
-            ) : (
-              <div className="space-y-3">
-                {followups.map((f) => (
-                  <div
-                    key={f.id}
-                    className="rounded-lg border p-3"
-                  >
-                    <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <Label htmlFor="amount">Amount</Label>
+              <Input
+                id="amount"
+                type="number"
+                step="0.01"
+                value={form.amount}
+                onChange={(e) => setForm({ ...form, amount: e.target.value })}
+                placeholder="0.00"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="tone">Tone</Label>
+              <Select
+                value={form.tone}
+                onValueChange={(v) => setForm({ ...form, tone: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {tones.map((t) => (
+                    <SelectItem key={t.value} value={t.value}>
+                      {t.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="interval">Follow-up Interval (days)</Label>
+              <Input
+                id="interval"
+                type="number"
+                min="1"
+                max="90"
+                value={form.followupInterval}
+                onChange={(e) =>
+                  setForm({ ...form, followupInterval: parseInt(e.target.value) || 7 })
+                }
+              />
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="status">Status</Label>
+              <Select
+                value={form.status}
+                onValueChange={(v) => setForm({ ...form, status: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="closed">Closed (Paid)</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="context">Context</Label>
+            <Textarea
+              id="context"
+              value={form.context}
+              onChange={(e) => setForm({ ...form, context: e.target.value })}
+              placeholder="Auto-generated from thread. Edit to refine follow-ups."
+              rows={3}
+            />
+          </div>
+
+          <div className="flex gap-2 pt-2">
+            <Button onClick={handleSave} disabled={saving}>
+              {saving ? "Saving..." : "Save Details"}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleCreateDraft}
+              disabled={creatingDraft || !isActive}
+            >
+              {creatingDraft ? "Creating..." : "Create Draft"}
+            </Button>
+            <Button
+              variant="default"
+              onClick={handleCreateAndSend}
+              disabled={sending || !isActive}
+            >
+              {sending ? "Sending..." : "Create and Send"}
+            </Button>
+          </div>
+        </section>
+
+        <Separator />
+
+        {/* Follow-up History Section */}
+        <section className="mt-8 space-y-4">
+          <h2 className="text-sm font-medium text-muted-foreground">
+            Follow-up History ({followups.length})
+          </h2>
+
+          {followups.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              No follow-ups yet.
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {followups.map((f) => (
+                <div
+                  key={f.id}
+                  className="rounded-lg border p-3"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
                       <span className="text-sm font-medium">
                         Follow-up #{f.followupNumber}
                       </span>
-                      <span className="text-xs text-muted-foreground">
-                        {formatDate(f.sentAt)}
-                      </span>
+                      <Badge variant={f.mode === "sent" ? "default" : "secondary"} className="text-xs">
+                        {f.mode === "sent" ? "Sent" : "Draft"}
+                      </Badge>
                     </div>
+                    <span className="text-xs text-muted-foreground">
+                      {formatDate(f.sentAt)}
+                    </span>
                   </div>
-                ))}
-              </div>
-            )}
-
-            <Separator />
-
-            <div className="space-y-2 text-sm text-muted-foreground">
-              <p>
-                <span className="font-medium">Initial request:</span>{" "}
-                {formatDate(request.initialRequestAt)}
-              </p>
-              <p>
-                <span className="font-medium">Created:</span>{" "}
-                {formatDate(request.createdAt)}
-              </p>
+                </div>
+              ))}
             </div>
-          </section>
-        </div>
+          )}
+
+          <Separator />
+
+          <div className="space-y-2 text-sm text-muted-foreground">
+            <p>
+              <span className="font-medium">Initial request:</span>{" "}
+              {formatDate(request.initialRequestAt)}
+            </p>
+            <p>
+              <span className="font-medium">Created:</span>{" "}
+              {formatDate(request.createdAt)}
+            </p>
+          </div>
+        </section>
       </main>
     </div>
   );

@@ -10,7 +10,7 @@ import {
   parseEmailHeaders,
   extractEmailBody,
 } from "@/lib/gmail";
-import { extractThreadContext } from "@/lib/anthropic";
+import { extractThreadContext, checkIfPaid } from "@/lib/anthropic";
 
 export async function POST() {
   const session = await auth();
@@ -96,8 +96,37 @@ export async function POST() {
       await db.insert(requests).values(newRequests);
     }
 
+    // Check existing active requests for payment confirmation
+    const activeRequests = await db
+      .select()
+      .from(requests)
+      .where(eq(requests.userId, session.user.id));
+
+    let autoCompleted = 0;
+    for (const req of activeRequests) {
+      if (req.status !== "active" || !req.threadId) continue;
+
+      try {
+        const threadDetails = await getThreadDetails(session.user.id, req.threadId);
+        const messages = threadDetails.messages || [];
+        const bodies = messages.map((m) => extractEmailBody(m.payload || {}));
+
+        const isPaid = await checkIfPaid(bodies);
+        if (isPaid) {
+          await db
+            .update(requests)
+            .set({ status: "closed" })
+            .where(eq(requests.id, req.id));
+          autoCompleted++;
+        }
+      } catch (e) {
+        console.error(`Error checking payment for request ${req.id}:`, e);
+      }
+    }
+
     return NextResponse.json({
       synced: newRequests.length,
+      autoCompleted,
       total: threads.length,
     });
   } catch (error) {

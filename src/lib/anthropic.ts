@@ -60,6 +60,30 @@ Write a brief, effective follow-up email. Keep it concise (3-5 sentences). Don't
   return textBlock?.type === "text" ? textBlock.text : "";
 }
 
+export async function checkIfPaid(
+  emailBodies: string[]
+): Promise<boolean> {
+  const combinedContent = emailBodies.join("\n\n---\n\n");
+
+  const prompt = `Analyze this email thread and determine if payment has been made or confirmed.
+Look for phrases like "payment sent", "paid", "transferred", "receipt attached", "thank you for your payment", etc.
+
+Email thread:
+${combinedContent}
+
+Respond with only "true" or "false" (no other text).`;
+
+  const response = await client.messages.create({
+    model: "claude-sonnet-4-20250514",
+    max_tokens: 10,
+    messages: [{ role: "user", content: prompt }],
+  });
+
+  const textBlock = response.content.find((block) => block.type === "text");
+  const text = textBlock?.type === "text" ? textBlock.text.toLowerCase().trim() : "false";
+  return text === "true";
+}
+
 export async function extractThreadContext(
   emailBodies: string[]
 ): Promise<{
@@ -91,7 +115,10 @@ Respond in JSON format:
   });
 
   const textBlock = response.content.find((block) => block.type === "text");
-  const text = textBlock?.type === "text" ? textBlock.text : "{}";
+  let text = textBlock?.type === "text" ? textBlock.text : "{}";
+
+  // Strip markdown code blocks if present
+  text = text.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
 
   try {
     const parsed = JSON.parse(text);
@@ -100,7 +127,8 @@ Respond in JSON format:
       amount: parsed.amount || null,
       context: parsed.context || "",
     };
-  } catch {
+  } catch (e) {
+    console.error("Failed to parse context:", e, text);
     return { recipientName: null, amount: null, context: "" };
   }
 }

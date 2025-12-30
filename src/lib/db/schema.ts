@@ -35,6 +35,7 @@ export const followups = pgTable("followups", {
   emailId: text("email_id"),
   sentAt: timestamp("sent_at", { withTimezone: true }).defaultNow(),
   followupNumber: integer("followup_number"),
+  mode: text("mode").default("draft"), // draft | sent
 });
 
 export type User = typeof users.$inferSelect;

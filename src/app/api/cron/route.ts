@@ -125,10 +125,12 @@ export async function GET(request: Request) {
         }
 
         // Record followup
+        const mode = user[0].followupAction === "send" ? "sent" : "draft";
         await db.insert(followups).values({
           requestId: request.id,
           emailId,
           followupNumber,
+          mode,
         });
 
         results.processed++;
