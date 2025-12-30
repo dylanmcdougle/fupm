@@ -1,8 +1,8 @@
 import { auth } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
 import { db } from "@/lib/db";
-import { requests, followups } from "@/lib/db/schema";
-import { eq, and, desc } from "drizzle-orm";
+import { requests, followups, voices } from "@/lib/db/schema";
+import { eq, and, desc, asc } from "drizzle-orm";
 import { RequestClient } from "./client";
 
 export default async function RequestPage({
@@ -34,7 +34,12 @@ export default async function RequestPage({
     .where(eq(followups.requestId, id))
     .orderBy(desc(followups.sentAt));
 
+  const allVoices = await db
+    .select()
+    .from(voices)
+    .orderBy(asc(voices.sortOrder));
+
   return (
-    <RequestClient request={request[0]} followups={requestFollowups} />
+    <RequestClient request={request[0]} followups={requestFollowups} voices={allVoices} />
   );
 }

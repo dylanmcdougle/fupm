@@ -38,9 +38,22 @@ export const followups = pgTable("followups", {
   mode: text("mode").default("draft"), // draft | sent
 });
 
+export const voices = pgTable("voices", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").unique().notNull(), // assistant, accountant, attorney, asshole
+  label: text("label").notNull(), // Display name in UI
+  description: text("description").notNull(), // Prompt description for AI
+  examples: text("examples"), // Example phrases or sample output
+  color: text("color"), // For UI badges (e.g., "blue", "green", "#4285F4")
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Request = typeof requests.$inferSelect;
 export type NewRequest = typeof requests.$inferInsert;
 export type Followup = typeof followups.$inferSelect;
 export type NewFollowup = typeof followups.$inferInsert;
+export type Voice = typeof voices.$inferSelect;
+export type NewVoice = typeof voices.$inferInsert;

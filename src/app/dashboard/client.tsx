@@ -123,14 +123,14 @@ export function DashboardClient({
             {syncing ? "Syncing..." : "Sync Gmail"}
           </Button>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Follow-ups:</span>
+            <span className="text-sm text-muted-foreground">Automatically:</span>
             <Select value={followupAction} onValueChange={handleFollowupActionChange}>
-              <SelectTrigger className="w-40 bg-white">
+              <SelectTrigger className="w-36 bg-white">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-white">
                 <SelectItem value="draft">Create draft</SelectItem>
-                <SelectItem value="send">Automatically send</SelectItem>
+                <SelectItem value="send">Send for me</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -151,7 +151,7 @@ export function DashboardClient({
                   {activeRequests.map((req) => (
                     <div
                       key={req.id}
-                      className="flex items-center justify-between rounded-lg border p-4"
+                      className="flex items-center justify-between rounded-lg border bg-white p-4"
                     >
                       <Link href={`/request/${req.id}`} className="min-w-0 flex-1 hover:opacity-70">
                         <div className="flex items-center gap-2">
@@ -209,7 +209,7 @@ export function DashboardClient({
                     <Link
                       key={req.id}
                       href={`/request/${req.id}`}
-                      className="flex items-center justify-between rounded-lg border p-4 opacity-60 transition-colors hover:bg-muted/50"
+                      className="flex items-center justify-between rounded-lg border bg-white p-4 opacity-60 transition-colors hover:bg-muted/50"
                     >
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">

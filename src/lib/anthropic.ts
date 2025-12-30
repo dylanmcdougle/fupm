@@ -1,21 +1,33 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { db } from "@/lib/db";
+import { voices } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-export type Tone = "assistant" | "accountant" | "attorney" | "asshole";
+async function getVoiceDescription(voiceName: string): Promise<string> {
+  const voice = await db
+    .select()
+    .from(voices)
+    .where(eq(voices.name, voiceName))
+    .limit(1);
 
-const toneDescriptions: Record<Tone, string> = {
-  assistant:
-    "Polite and helpful, like a friendly assistant. Warm but professional. Simply checking in on the status with a gentle reminder.",
-  accountant:
-    "Business-like and matter-of-fact. Focused on numbers and dates. References invoice numbers, due dates, and payment terms. Neutral and transactional.",
-  attorney:
-    "Formal and direct. References obligations, agreements, and potential next steps. Professional but makes it clear this is a serious matter that requires attention.",
-  asshole:
-    "Blunt, impatient, and fed up. No pleasantries. Makes it clear you're done waiting and this is unacceptable. Borderline rude but still professional enough to send.",
-};
+  if (voice.length > 0) {
+    return voice[0].description;
+  }
+
+  // Fallback descriptions if voice not found in DB
+  const fallbacks: Record<string, string> = {
+    assistant: "Polite and helpful, like a friendly assistant. Warm but professional.",
+    accountant: "Business-like and matter-of-fact. Focused on numbers and dates.",
+    attorney: "Formal and direct. References obligations and potential next steps.",
+    asshole: "Blunt, impatient, and fed up. No pleasantries.",
+  };
+
+  return fallbacks[voiceName] || fallbacks.assistant;
+}
 
 export async function generateFollowupEmail({
   recipientName,
@@ -29,11 +41,13 @@ export async function generateFollowupEmail({
   recipientName?: string | null;
   amount?: string | null;
   context?: string | null;
-  tone: Tone;
+  tone: string;
   followupNumber: number;
   daysSinceInitial: number;
   originalSubject?: string | null;
 }): Promise<string> {
+  const voiceDescription = await getVoiceDescription(tone);
+
   const prompt = `You are helping someone follow up on an unpaid invoice or payment request.
 
 Context about the request:
@@ -44,7 +58,7 @@ Context about the request:
 - This is follow-up #${followupNumber}
 - It has been ${daysSinceInitial} days since the initial request
 
-Tone: ${tone} - ${toneDescriptions[tone]}
+Tone: ${tone} - ${voiceDescription}
 
 ${followupNumber > 1 && tone !== "assistant" ? `This is follow-up #${followupNumber}, so the urgency should naturally escalate. ` : ""}
 ${followupNumber > 3 && tone !== "assistant" ? "This has been outstanding for a while, so be more direct about needing resolution. " : ""}

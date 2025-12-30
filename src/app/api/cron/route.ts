@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requests, followups, users } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
-import { generateFollowupEmail, Tone } from "@/lib/anthropic";
+import { generateFollowupEmail } from "@/lib/anthropic";
 import { createDraft, sendEmail } from "@/lib/gmail";
 
 // Verify cron secret to prevent unauthorized access
@@ -90,7 +90,7 @@ export async function GET(request: Request) {
           recipientName: request.recipientName,
           amount: request.amount,
           context: request.context,
-          tone: (request.tone as Tone) || "assistant",
+          tone: request.tone || "assistant",
           followupNumber,
           daysSinceInitial,
           originalSubject: request.subject,

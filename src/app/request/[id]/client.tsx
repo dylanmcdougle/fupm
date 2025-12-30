@@ -16,21 +16,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Request, Followup } from "@/lib/db/schema";
-
-const tones = [
-  { value: "assistant", label: "Assistant" },
-  { value: "accountant", label: "Accountant" },
-  { value: "attorney", label: "Attorney" },
-  { value: "asshole", label: "Asshole" },
-];
+import type { Request, Followup, Voice } from "@/lib/db/schema";
 
 export function RequestClient({
   request,
   followups,
+  voices,
 }: {
   request: Request;
   followups: Followup[];
+  voices: Voice[];
 }) {
   const router = useRouter();
   const [creatingDraft, setCreatingDraft] = useState(false);
@@ -254,9 +249,9 @@ export function RequestClient({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-white">
-                    {tones.map((t) => (
-                      <SelectItem key={t.value} value={t.value}>
-                        {t.label}
+                    {voices.map((v) => (
+                      <SelectItem key={v.name} value={v.name}>
+                        {v.label}
                       </SelectItem>
                     ))}
                   </SelectContent>

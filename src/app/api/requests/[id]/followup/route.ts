@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { requests, followups, users } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
-import { generateFollowupEmail, Tone } from "@/lib/anthropic";
+import { generateFollowupEmail } from "@/lib/anthropic";
 import { createDraft, sendEmail } from "@/lib/gmail";
 
 export async function POST(
@@ -76,7 +76,7 @@ export async function POST(
       recipientName: request.recipientName,
       amount: request.amount,
       context: request.context,
-      tone: (request.tone as Tone) || "assistant",
+      tone: request.tone || "assistant",
       followupNumber,
       daysSinceInitial,
       originalSubject: request.subject,
