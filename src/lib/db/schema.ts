@@ -24,7 +24,7 @@ export const requests = pgTable("requests", {
   status: text("status").default("active"), // active | closed | cancelled
   followupInterval: integer("followup_interval").default(7),
   context: text("context"),
-  tone: text("tone").default("professional"), // professional | friendly | firm | aggressive
+  tone: text("tone").default("assistant"), // assistant | accountant | attorney | asshole
   initialRequestAt: timestamp("initial_request_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });

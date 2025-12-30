@@ -4,16 +4,17 @@ const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-export type Tone = "professional" | "friendly" | "firm" | "aggressive";
+export type Tone = "assistant" | "accountant" | "attorney" | "asshole";
 
 const toneDescriptions: Record<Tone, string> = {
-  professional:
-    "Polite and business-like. Neutral tone, matter-of-fact. Simply checking in on the status.",
-  friendly:
-    "Super casual and warm, like texting a friend. Light-hearted, maybe even a bit playful. No pressure at all - just a gentle nudge. Use casual language like 'hey' or 'just wanted to check in'. Keep it SHORT.",
-  firm: "Direct and assertive. Makes it clear this is important and needs attention, without being rude.",
-  aggressive:
-    "Very direct and urgent. Emphasizes consequences and the need for immediate action. This is serious.",
+  assistant:
+    "Polite and helpful, like a friendly assistant. Warm but professional. Simply checking in on the status with a gentle reminder.",
+  accountant:
+    "Business-like and matter-of-fact. Focused on numbers and dates. References invoice numbers, due dates, and payment terms. Neutral and transactional.",
+  attorney:
+    "Formal and direct. References obligations, agreements, and potential next steps. Professional but makes it clear this is a serious matter that requires attention.",
+  asshole:
+    "Blunt, impatient, and fed up. No pleasantries. Makes it clear you're done waiting and this is unacceptable. Borderline rude but still professional enough to send.",
 };
 
 export async function generateFollowupEmail({
@@ -45,9 +46,9 @@ Context about the request:
 
 Tone: ${tone} - ${toneDescriptions[tone]}
 
-${followupNumber > 1 && tone !== "friendly" ? `This is follow-up #${followupNumber}, so the urgency should naturally escalate. ` : ""}
-${followupNumber > 3 && tone !== "friendly" ? "This has been outstanding for a while, so be more direct about needing resolution. " : ""}
-${followupNumber > 1 && tone === "friendly" ? `This is follow-up #${followupNumber}, but keep it light and friendly regardless. ` : ""}
+${followupNumber > 1 && tone !== "assistant" ? `This is follow-up #${followupNumber}, so the urgency should naturally escalate. ` : ""}
+${followupNumber > 3 && tone !== "assistant" ? "This has been outstanding for a while, so be more direct about needing resolution. " : ""}
+${followupNumber > 1 && tone === "assistant" ? `This is follow-up #${followupNumber}, but keep it polite and helpful regardless. ` : ""}
 
 Write a brief, effective follow-up email. Keep it concise (3-5 sentences). Don't include a subject line - just the body text. Don't include a formal greeting or signature - just the core message.`;
 

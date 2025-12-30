@@ -76,7 +76,7 @@ export async function POST(
       recipientName: request.recipientName,
       amount: request.amount,
       context: request.context,
-      tone: (request.tone as Tone) || "professional",
+      tone: (request.tone as Tone) || "assistant",
       followupNumber,
       daysSinceInitial,
       originalSubject: request.subject,

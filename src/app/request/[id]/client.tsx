@@ -19,10 +19,10 @@ import {
 import type { Request, Followup } from "@/lib/db/schema";
 
 const tones = [
-  { value: "professional", label: "Professional" },
-  { value: "friendly", label: "Friendly" },
-  { value: "firm", label: "Firm" },
-  { value: "aggressive", label: "Aggressive" },
+  { value: "assistant", label: "Assistant" },
+  { value: "accountant", label: "Accountant" },
+  { value: "attorney", label: "Attorney" },
+  { value: "asshole", label: "Asshole" },
 ];
 
 export function RequestClient({
@@ -40,7 +40,7 @@ export function RequestClient({
     recipientName: request.recipientName || "",
     recipientEmail: request.recipientEmail,
     amount: request.amount || "",
-    tone: request.tone || "professional",
+    tone: request.tone || "assistant",
     followupInterval: request.followupInterval || 7,
     context: request.context || "",
     status: request.status || "active",
@@ -220,7 +220,7 @@ export function RequestClient({
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="tone">Tone</Label>
+              <Label htmlFor="tone">Voice</Label>
               <Select
                 value={form.tone}
                 onValueChange={(v) => setForm({ ...form, tone: v })}

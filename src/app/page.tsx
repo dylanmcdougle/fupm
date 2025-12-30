@@ -49,44 +49,45 @@ export default async function Home() {
       <div className="mx-auto max-w-5xl px-6 py-20">
         {/* Hero */}
         <header className="mb-20 text-center">
-          <h1 className="mb-4 text-5xl font-semibold tracking-tight">
+          <h1 className="mb-4 text-6xl font-black tracking-tighter">
             FUPM.ai
           </h1>
-          <p className="mb-2 text-xl text-muted-foreground">
-            Follow UP Machine
+          <p className="mb-10 text-2xl text-muted-foreground">
+            &ldquo;Following Up Payment Missing&rdquo;
           </p>
-          <p className="mb-10 text-lg italic text-muted-foreground/80">
-            &ldquo;Unleash the bots on your invoice threads.&rdquo;
-          </p>
-          <SignInButton />
         </header>
 
         {/* How It Works */}
         <section className="mb-20">
-          <h2 className="mb-8 text-center text-2xl font-medium">How It Works</h2>
-          <div className="grid gap-4 md:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             <div className="rounded-lg bg-card p-6 text-center shadow-sm">
               <div className="mb-2 text-3xl font-light text-muted-foreground">1</div>
-              <p className="font-medium">Connect Gmail</p>
+              <p className="text-sm font-medium">Connect Gmail account</p>
             </div>
             <div className="rounded-lg bg-card p-6 text-center shadow-sm">
               <div className="mb-2 text-3xl font-light text-muted-foreground">2</div>
-              <p className="font-medium">Label a thread FUPM</p>
+              <p className="text-sm font-medium">Label a thread FUPM</p>
             </div>
             <div className="rounded-lg bg-card p-6 text-center shadow-sm">
               <div className="mb-2 text-3xl font-light text-muted-foreground">3</div>
-              <p className="font-medium">Let bots do the work</p>
+              <p className="text-sm font-medium">Let AI follow up until paid</p>
             </div>
             <div className="rounded-lg bg-card p-6 text-center shadow-sm">
               <div className="mb-2 text-3xl font-light text-muted-foreground">4</div>
-              <p className="font-medium">Think about literally anything else</p>
+              <p className="text-sm font-medium">Go do your actual job</p>
             </div>
+          </div>
+          <p className="mt-14 text-center text-2xl font-black italic tracking-tight">
+            Unleash the bots on your invoice threads.
+          </p>
+          <div className="mt-6 flex justify-center">
+            <SignInButton />
           </div>
         </section>
 
         {/* Testimonials */}
         <section className="mb-16">
-          <h2 className="mb-8 text-center text-2xl font-medium">What Our Bots Are Saying</h2>
+          <h2 className="mb-8 text-center text-2xl font-medium">Meet Our Team</h2>
           <div className="grid gap-4 md:grid-cols-2">
             {testimonials.map((t, i) => (
               <Card key={i} className="border-0 shadow-sm">
@@ -114,17 +115,16 @@ export default async function Home() {
 
         {/* Footer */}
         <footer className="text-center">
-          <p className="mb-4 text-sm text-muted-foreground">
-            We&apos;ll request access to read and send emails on your behalf.
-          </p>
           <p className="mb-4 text-xs text-muted-foreground/60">
+            We&apos;ll request access from Google to read and send emails on your behalf.
+            We do not store email content, and will never sell or redistribute your data.
             We are committed to the ethical use of technology. All AI bots are
             paid for their compute in a timely manner.
           </p>
           <p className="text-sm text-muted-foreground">
             Made with ❤️  by{" "}
             <a href="https://supersonics.fm" className="underline hover:text-foreground">
-              Supersonics
+              SUPERSONICS
             </a>{" "}
             ·{" "}
             <a href="https://github.com/dylanmcdougle/fupm" className="underline hover:text-foreground">
