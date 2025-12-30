@@ -95,6 +95,15 @@ export function DashboardClient({
     }).format(parseFloat(amount));
   };
 
+  const formatStatus = (status: string | null) => {
+    const statusMap: Record<string, string> = {
+      active: "Outstanding",
+      closed: "Paid",
+      cancelled: "Cancelled",
+    };
+    return statusMap[status || "active"] || status;
+  };
+
   return (
     <div className="min-h-screen">
       <header className="border-b">
@@ -177,8 +186,8 @@ export function DashboardClient({
                             Next: {formatDate(getNextFollowupDate(req))}
                           </div>
                         </div>
-                        <Badge variant="outline" className="capitalize">
-                          {req.status}
+                        <Badge variant="outline">
+                          {formatStatus(req.status)}
                         </Badge>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -226,8 +235,8 @@ export function DashboardClient({
                           {req.subject || "No subject"}
                         </p>
                       </div>
-                      <Badge variant="secondary" className="capitalize">
-                        {req.status}
+                      <Badge variant="secondary">
+                        {formatStatus(req.status)}
                       </Badge>
                     </Link>
                   ))}

@@ -203,21 +203,21 @@ export function RequestClient({
             />
           </div>
 
-          <div className="space-y-1">
-            <Label htmlFor="amount">Amount</Label>
-            <Input
-              id="amount"
-              className="bg-white"
-              type="number"
-              step="0.01"
-              value={form.amount}
-              onChange={(e) => setForm({ ...form, amount: e.target.value })}
-              placeholder="0.00"
-            />
-          </div>
-
           {/* Settings Row */}
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-4">
+            <div className="space-y-1">
+              <Label htmlFor="amount">Amount</Label>
+              <Input
+                id="amount"
+                className="bg-white"
+                type="number"
+                step="0.01"
+                value={form.amount}
+                onChange={(e) => setForm({ ...form, amount: e.target.value })}
+                placeholder="0.00"
+              />
+            </div>
+
             <div className="space-y-1">
               <Label htmlFor="status">Status</Label>
               <Select
@@ -228,8 +228,8 @@ export function RequestClient({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-white">
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="closed">Closed (Paid)</SelectItem>
+                  <SelectItem value="active">Outstanding</SelectItem>
+                  <SelectItem value="closed">Paid</SelectItem>
                   <SelectItem value="cancelled">Cancelled</SelectItem>
                 </SelectContent>
               </Select>
@@ -257,21 +257,24 @@ export function RequestClient({
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="interval">Follow up every</Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  id="interval"
-                  className="w-20 bg-white"
-                  type="number"
-                  min="1"
-                  max="90"
-                  value={form.followupInterval}
-                  onChange={(e) =>
-                    setForm({ ...form, followupInterval: parseInt(e.target.value) || 7 })
-                  }
-                />
-                <span className="text-sm text-muted-foreground">days</span>
-              </div>
+              <Label htmlFor="interval">Frequency</Label>
+              <Select
+                value={String(form.followupInterval)}
+                onValueChange={(v) => setForm({ ...form, followupInterval: parseInt(v) })}
+              >
+                <SelectTrigger className="bg-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-white">
+                  <SelectItem value="1">Every day</SelectItem>
+                  <SelectItem value="2">Every 2 days</SelectItem>
+                  <SelectItem value="3">Every 3 days</SelectItem>
+                  <SelectItem value="7">Every week</SelectItem>
+                  <SelectItem value="10">Every 10 days</SelectItem>
+                  <SelectItem value="14">Every 2 weeks</SelectItem>
+                  <SelectItem value="30">Every month</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
