@@ -113,21 +113,24 @@ export function DashboardClient({
 
       <main className="mx-auto max-w-3xl px-4 py-8">
         <div className="mb-8 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <h1 className="text-xl font-light">Requests</h1>
-            <Button variant="outline" size="sm" onClick={handleSync} disabled={syncing}>
-              {syncing ? "Syncing..." : "Sync Gmail"}
-            </Button>
-          </div>
+          <Button variant="default" size="sm" onClick={handleSync} disabled={syncing}>
+            <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+              <path d="M3 3v5h5" />
+              <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
+              <path d="M16 16h5v5" />
+            </svg>
+            {syncing ? "Syncing..." : "Sync Gmail"}
+          </Button>
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground">Follow-ups:</span>
             <Select value={followupAction} onValueChange={handleFollowupActionChange}>
-              <SelectTrigger className="w-28">
+              <SelectTrigger className="w-40 bg-white">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="draft">Draft</SelectItem>
-                <SelectItem value="send">Auto-send</SelectItem>
+              <SelectContent className="bg-white">
+                <SelectItem value="draft">Create draft</SelectItem>
+                <SelectItem value="send">Automatically send</SelectItem>
               </SelectContent>
             </Select>
           </div>

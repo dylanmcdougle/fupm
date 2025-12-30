@@ -184,89 +184,102 @@ export function RequestClient({
           <h2 className="text-sm font-medium text-muted-foreground">Settings & Context</h2>
 
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-1">
-              <Label htmlFor="recipientName">Recipient Name</Label>
-              <Input
-                id="recipientName"
-                value={form.recipientName}
-                onChange={(e) =>
-                  setForm({ ...form, recipientName: e.target.value })
-                }
-                placeholder="John Doe"
-              />
+            {/* Column 1: Name, Email, Amount */}
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <Label htmlFor="recipientName">Recipient Name</Label>
+                <Input
+                  id="recipientName"
+                  className="bg-white"
+                  value={form.recipientName}
+                  onChange={(e) =>
+                    setForm({ ...form, recipientName: e.target.value })
+                  }
+                  placeholder="John Doe"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <Label htmlFor="recipientEmail">Recipient Email</Label>
+                <Input
+                  id="recipientEmail"
+                  className="bg-white"
+                  value={form.recipientEmail}
+                  onChange={(e) =>
+                    setForm({ ...form, recipientEmail: e.target.value })
+                  }
+                />
+              </div>
+
+              <div className="space-y-1">
+                <Label htmlFor="amount">Amount</Label>
+                <Input
+                  id="amount"
+                  className="bg-white"
+                  type="number"
+                  step="0.01"
+                  value={form.amount}
+                  onChange={(e) => setForm({ ...form, amount: e.target.value })}
+                  placeholder="0.00"
+                />
+              </div>
             </div>
 
-            <div className="space-y-1">
-              <Label htmlFor="recipientEmail">Recipient Email</Label>
-              <Input
-                id="recipientEmail"
-                value={form.recipientEmail}
-                onChange={(e) =>
-                  setForm({ ...form, recipientEmail: e.target.value })
-                }
-              />
-            </div>
+            {/* Column 2: Status, Voice, Interval */}
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <Label htmlFor="status">Status</Label>
+                <Select
+                  value={form.status}
+                  onValueChange={(v) => setForm({ ...form, status: v })}
+                >
+                  <SelectTrigger className="bg-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white">
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="closed">Closed (Paid)</SelectItem>
+                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div className="space-y-1">
-              <Label htmlFor="amount">Amount</Label>
-              <Input
-                id="amount"
-                type="number"
-                step="0.01"
-                value={form.amount}
-                onChange={(e) => setForm({ ...form, amount: e.target.value })}
-                placeholder="0.00"
-              />
-            </div>
+              <div className="space-y-1">
+                <Label htmlFor="tone">Voice</Label>
+                <Select
+                  value={form.tone}
+                  onValueChange={(v) => setForm({ ...form, tone: v })}
+                >
+                  <SelectTrigger className="bg-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white">
+                    {tones.map((t) => (
+                      <SelectItem key={t.value} value={t.value}>
+                        {t.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div className="space-y-1">
-              <Label htmlFor="tone">Voice</Label>
-              <Select
-                value={form.tone}
-                onValueChange={(v) => setForm({ ...form, tone: v })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {tones.map((t) => (
-                    <SelectItem key={t.value} value={t.value}>
-                      {t.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-1">
-              <Label htmlFor="interval">Follow-up Interval (days)</Label>
-              <Input
-                id="interval"
-                type="number"
-                min="1"
-                max="90"
-                value={form.followupInterval}
-                onChange={(e) =>
-                  setForm({ ...form, followupInterval: parseInt(e.target.value) || 7 })
-                }
-              />
-            </div>
-
-            <div className="space-y-1">
-              <Label htmlFor="status">Status</Label>
-              <Select
-                value={form.status}
-                onValueChange={(v) => setForm({ ...form, status: v })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="closed">Closed (Paid)</SelectItem>
-                  <SelectItem value="cancelled">Cancelled</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="space-y-1">
+                <Label htmlFor="interval">Follow up every</Label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="interval"
+                    className="w-20 bg-white"
+                    type="number"
+                    min="1"
+                    max="90"
+                    value={form.followupInterval}
+                    onChange={(e) =>
+                      setForm({ ...form, followupInterval: parseInt(e.target.value) || 7 })
+                    }
+                  />
+                  <span className="text-sm text-muted-foreground">days</span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -274,6 +287,7 @@ export function RequestClient({
             <Label htmlFor="context">Context</Label>
             <Textarea
               id="context"
+              className="bg-white"
               value={form.context}
               onChange={(e) => setForm({ ...form, context: e.target.value })}
               placeholder="Auto-generated from thread. Edit to refine follow-ups."
@@ -283,14 +297,14 @@ export function RequestClient({
 
           <div className="flex items-center gap-2 pt-2">
             <Button
-              variant="outline"
+              variant="default"
               onClick={handleCreateDraft}
               disabled={creatingDraft || !isActive}
             >
               {creatingDraft ? "Creating..." : "Create Draft"}
             </Button>
             <Button
-              variant="default"
+              variant="outline"
               onClick={handleCreateAndSend}
               disabled={sending || !isActive}
             >
@@ -321,7 +335,7 @@ export function RequestClient({
               {followups.map((f) => (
                 <div
                   key={f.id}
-                  className="rounded-lg border p-3"
+                  className="rounded-lg border bg-white p-3"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
