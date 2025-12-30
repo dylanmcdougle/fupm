@@ -178,7 +178,7 @@ export function DashboardClient({
                           </div>
                         </div>
                         <Badge variant="outline" className="capitalize">
-                          {req.tone}
+                          {req.status}
                         </Badge>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
