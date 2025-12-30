@@ -8,12 +8,12 @@ export type Tone = "professional" | "friendly" | "firm" | "aggressive";
 
 const toneDescriptions: Record<Tone, string> = {
   professional:
-    "Polite and business-like. Maintains professionalism while being clear about the request.",
+    "Polite and business-like. Neutral tone, matter-of-fact. Simply checking in on the status.",
   friendly:
-    "Warm and personable. Uses a conversational tone while still being clear about needing payment.",
+    "Super casual and warm, like texting a friend. Light-hearted, maybe even a bit playful. No pressure at all - just a gentle nudge. Use casual language like 'hey' or 'just wanted to check in'. Keep it SHORT.",
   firm: "Direct and assertive. Makes it clear this is important and needs attention, without being rude.",
   aggressive:
-    "Very direct and urgent. Emphasizes consequences and the need for immediate action.",
+    "Very direct and urgent. Emphasizes consequences and the need for immediate action. This is serious.",
 };
 
 export async function generateFollowupEmail({
@@ -45,8 +45,9 @@ Context about the request:
 
 Tone: ${tone} - ${toneDescriptions[tone]}
 
-${followupNumber > 1 ? `This is follow-up #${followupNumber}, so the urgency should naturally escalate. ` : ""}
-${followupNumber > 3 ? "This has been outstanding for a while, so be more direct about needing resolution. " : ""}
+${followupNumber > 1 && tone !== "friendly" ? `This is follow-up #${followupNumber}, so the urgency should naturally escalate. ` : ""}
+${followupNumber > 3 && tone !== "friendly" ? "This has been outstanding for a while, so be more direct about needing resolution. " : ""}
+${followupNumber > 1 && tone === "friendly" ? `This is follow-up #${followupNumber}, but keep it light and friendly regardless. ` : ""}
 
 Write a brief, effective follow-up email. Keep it concise (3-5 sentences). Don't include a subject line - just the body text. Don't include a formal greeting or signature - just the core message.`;
 

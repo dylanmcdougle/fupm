@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -33,9 +33,9 @@ export function RequestClient({
   followups: Followup[];
 }) {
   const router = useRouter();
-  const [saving, setSaving] = useState(false);
   const [creatingDraft, setCreatingDraft] = useState(false);
   const [sending, setSending] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"saved" | "saving" | "">("");
   const [form, setForm] = useState({
     recipientName: request.recipientName || "",
     recipientEmail: request.recipientEmail,
@@ -46,21 +46,46 @@ export function RequestClient({
     status: request.status || "active",
   });
 
-  const handleSave = async () => {
-    setSaving(true);
+  const isFirstRender = useRef(true);
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const saveForm = useCallback(async (formData: typeof form) => {
+    setSaveStatus("saving");
     try {
       await fetch(`/api/requests/${request.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(formData),
       });
-      router.refresh();
+      setSaveStatus("saved");
+      setTimeout(() => setSaveStatus(""), 2000);
     } catch (error) {
       console.error("Save failed:", error);
-    } finally {
-      setSaving(false);
+      setSaveStatus("");
     }
-  };
+  }, [request.id]);
+
+  // Auto-save with debounce
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+
+    saveTimeoutRef.current = setTimeout(() => {
+      saveForm(form);
+    }, 500);
+
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, [form, saveForm]);
 
   const handleCreateDraft = async () => {
     setCreatingDraft(true);
@@ -256,10 +281,7 @@ export function RequestClient({
             />
           </div>
 
-          <div className="flex gap-2 pt-2">
-            <Button onClick={handleSave} disabled={saving}>
-              {saving ? "Saving..." : "Save Details"}
-            </Button>
+          <div className="flex items-center gap-2 pt-2">
             <Button
               variant="outline"
               onClick={handleCreateDraft}
@@ -274,6 +296,11 @@ export function RequestClient({
             >
               {sending ? "Sending..." : "Create and Send"}
             </Button>
+            {saveStatus && (
+              <span className="text-sm text-muted-foreground">
+                {saveStatus === "saving" ? "Saving..." : "Saved"}
+              </span>
+            )}
           </div>
         </section>
 
