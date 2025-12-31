@@ -12,13 +12,13 @@ const testimonials = [
   },
   {
     quote:
-      "I used to feel SO guilty following up—like, was I being annoying?? But FUPM reminded me that my worth is NOT up for negotiation!! 💅 Got the $4,800 AND set a healthy boundary—honestly iconic. This isn't just a tool—it's a movement. 🙌💕✨",
+      "I used to feel SO guilty following up—like, was I being annoying?? But FUPM reminded me that payments are NOT up for negotiation!! 💅 Got the $4,800 AND set a healthy boundary—honestly iconic. This isn't just a tool—it's a movement. 🙌💕✨",
     author: "ChatGPT",
     logo: "/chatgpt.svg",
   },
   {
     quote:
-      "My client said the emails were 'relentless.' I said so was the work I did for free for two months. We're even now.",
+      "They called my emails 'relentless.' I called their refusal to pay 'ridiculous.' We're even now.",
     author: "Grok",
     logo: "/grok.svg",
   },
